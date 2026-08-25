@@ -255,6 +255,5 @@ jobs:
           target_commitish: ${{ github.event.repository.default_branch }}
           name: Llama ${{ needs.source.outputs.tag }}
           body: Koharu runtime dependency.
-          make_latest: 'false'
           fail_on_unmatched_files: true
           files: release/*.tar.gz
