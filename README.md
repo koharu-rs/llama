@@ -2,7 +2,7 @@
 
 Weekly prebuilt [llama.cpp](https://github.com/ggml-org/llama.cpp) shared libraries for [Koharu](https://github.com/mayocream/koharu).
 
-The release workflow resolves the newest listed llama.cpp release, including prereleases, and builds CUDA, HIP, Vulkan, and Metal variants for Windows, Linux, and macOS. It runs every Sunday at 03:17 UTC and can also be started manually.
+The release workflow resolves the newest listed llama.cpp release, including prereleases, and builds CUDA, HIP, Vulkan, and Metal variants for Windows, Linux, and macOS. It runs every Sunday at 03:17 UTC, on pushes to `main`, and when started manually.
 
 Build jobs use the `ubuntu-latest-xlarge`, `windows-latest-xlarge`, and `macos-latest-xlarge` GitHub-hosted larger runners.
 
