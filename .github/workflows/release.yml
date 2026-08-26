@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}
+      release_tag: ${{ steps.release.outputs.release_tag }}
 
     steps:
       - name: Resolve latest llama.cpp release
@@ -28,7 +29,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag=$(gh api repos/ggml-org/llama.cpp/releases --jq '.[0].tag_name')
+          existing_tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[].tag_name')
+          release_tag=$tag
+          suffix=1
+          while grep -Fxq "$release_tag" <<< "$existing_tags"; do
+            release_tag="$tag.$suffix"
+            ((suffix += 1))
+          done
           printf 'tag=%s\n' "$tag" >> "$GITHUB_OUTPUT"
+          printf 'release_tag=%s\n' "$release_tag" >> "$GITHUB_OUTPUT"
 
   build:
     needs: source
@@ -251,9 +260,9 @@ jobs:
       - name: Publish llama release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.source.outputs.tag }}
+          tag_name: ${{ needs.source.outputs.release_tag }}
           target_commitish: ${{ github.event.repository.default_branch }}
-          name: Llama ${{ needs.source.outputs.tag }}
+          name: Llama ${{ needs.source.outputs.release_tag }}
           body: Koharu runtime dependency.
           fail_on_unmatched_files: true
           files: release/*.tar.gz
