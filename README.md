@@ -4,6 +4,6 @@ Weekly prebuilt [llama.cpp](https://github.com/ggml-org/llama.cpp) shared librar
 
 The release workflow resolves the newest listed llama.cpp release, including prereleases, and builds CUDA, HIP, Vulkan, and Metal variants for Windows, Linux, and macOS. It runs every Sunday at 03:17 UTC, on pushes to `main`, and when started manually.
 
-Build jobs use the `ubuntu-latest-xlarge`, `windows-2022-xlarge`, and `macos-latest-xlarge` GitHub-hosted larger runners.
+Build jobs use the standard `ubuntu-latest`, `windows-2022`, and `macos-latest` GitHub-hosted runners.
 
 Generated binaries are published through this repository's [releases](https://github.com/koharu-org/llama/releases).
