@@ -220,7 +220,7 @@ jobs:
       - name: Build llama and MTMD
         shell: bash
         timeout-minutes: 300
-        run: cmake --build build --target llama mtmd --config Release
+        run: cmake --build build --target llama mtmd --config Release --parallel "$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)"
 
       - name: Package llama and MTMD
         shell: bash
