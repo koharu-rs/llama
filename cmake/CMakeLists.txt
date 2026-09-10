@@ -105,6 +105,10 @@ if(WIN32)
                 GGML_BACKEND_SHARED
         )
     endforeach()
+    if(LLAMA_BACKEND STREQUAL "HIP")
+        # GPU passes ignore the Windows export attributes needed by libllama.
+        target_compile_options(ggml-hip PRIVATE "SHELL:-Xarch_device -Wno-ignored-attributes")
+    endif()
     set_target_properties(llama PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
