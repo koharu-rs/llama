@@ -110,6 +110,8 @@ if(WIN32)
         target_compile_options(ggml-hip PRIVATE "SHELL:-Xarch_device -Wno-ignored-attributes")
     endif()
     set_target_properties(llama PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    # CMake's automatic exports truncate MSVC PCH symbols to "__".
+    set_property(TARGET llama PROPERTY DISABLE_PRECOMPILE_HEADERS ON)
 endif()
 
 set_target_properties(
