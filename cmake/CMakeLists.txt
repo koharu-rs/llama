@@ -98,6 +98,11 @@ target_include_directories(mtmd PRIVATE "${LLAMA_CPP_SOURCE_DIR}/ggml/include")
 # carries a C wrapper for callers that load it at runtime.
 target_include_directories(llama-common PRIVATE "${LLAMA_CPP_SOURCE_DIR}/ggml/include")
 target_sources(llama-common PRIVATE "${CMAKE_CURRENT_LIST_DIR}/wrapper/wrapper_common.cpp")
+if(MSVC)
+    # The wrapper's try blocks guard llama.cpp's extern "C" functions, which throw.
+    # CMake's default /EHsc assumes they can't, so the exception would pass through.
+    target_compile_options(llama-common PRIVATE /EHc-)
+endif()
 
 if(WIN32)
     foreach(_target IN LISTS _ggml_targets)
