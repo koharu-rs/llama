@@ -6,6 +6,8 @@ The release workflow resolves the newest listed llama.cpp release, including pre
 
 Build jobs use the standard `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub-hosted runners.
 
+Each archive holds `llama`, `mtmd`, and `llama-common`. `llama-common` is llama.cpp's common library with the C wrapper in [`cmake/wrapper`](cmake/wrapper), from [llama-cpp-rs](https://github.com/utilityai/llama-cpp-rs), so callers that load it at runtime can use it through `llama_rs_*` functions.
+
 Generated binaries are published through this repository's [releases](https://github.com/koharu-org/llama/releases).
 
 ## License

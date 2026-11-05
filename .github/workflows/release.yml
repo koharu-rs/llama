@@ -256,17 +256,18 @@ jobs:
             -DCMAKE_HIP_COMPILER_LAUNCHER=sccache \
             "${backend_args[@]}"
 
-      - name: Build llama and MTMD
+      - name: Build llama, MTMD, and common
         shell: bash
         timeout-minutes: 300
-        run: cmake --build build --target llama mtmd --config Release
+        run: cmake --build build --target llama mtmd llama-common --config Release
 
-      - name: Package llama and MTMD
+      - name: Package llama, MTMD, and common
         shell: bash
         run: |
           mkdir package
           cp build/bin/*llama.* package/
           cp build/bin/*mtmd.* package/
+          cp build/bin/*llama-common.* package/
           tar -C package -czf "$TARGET_TRIPLE-$BACKEND.tar.gz" .
 
       - name: Stop sccache

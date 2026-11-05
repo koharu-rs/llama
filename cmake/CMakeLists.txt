@@ -17,13 +17,13 @@ endif()
 
 file(REAL_PATH "${LLAMA_CPP_SOURCE_DIR}" LLAMA_CPP_SOURCE_DIR)
 
-# Keep libllama and libmtmd shared while the nested GGML project builds static
-# libraries that are folded into libllama.
+# Keep libllama, libmtmd, and libllama-common shared while the nested GGML project
+# builds static libraries that are folded into libllama.
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_PROJECT_INCLUDE_BEFORE "${CMAKE_CURRENT_LIST_DIR}/ggml-static.cmake")
 
-set(LLAMA_BUILD_COMMON OFF CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_COMMON ON CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -60,7 +60,7 @@ endif()
 
 add_subdirectory("${LLAMA_CPP_SOURCE_DIR}" llama.cpp)
 
-foreach(_target llama mtmd)
+foreach(_target llama mtmd llama-common)
     get_target_property(_type "${_target}" TYPE)
     if(NOT _type STREQUAL "SHARED_LIBRARY")
         message(FATAL_ERROR "Expected ${_target} to be shared, got ${_type}")
@@ -94,6 +94,11 @@ set_property(TARGET mtmd PROPERTY LINK_LIBRARIES "${_mtmd_link_libraries}")
 set_property(TARGET mtmd PROPERTY INTERFACE_LINK_LIBRARIES "llama")
 target_include_directories(mtmd PRIVATE "${LLAMA_CPP_SOURCE_DIR}/ggml/include")
 
+# libllama-common uses the same GGML symbols. Its C++ API is unstable, so it also
+# carries a C wrapper for callers that load it at runtime.
+target_include_directories(llama-common PRIVATE "${LLAMA_CPP_SOURCE_DIR}/ggml/include")
+target_sources(llama-common PRIVATE "${CMAKE_CURRENT_LIST_DIR}/wrapper/wrapper_common.cpp")
+
 if(WIN32)
     foreach(_target IN LISTS _ggml_targets)
         target_compile_definitions(
@@ -115,18 +120,18 @@ if(WIN32)
 endif()
 
 set_target_properties(
-    llama mtmd
+    llama mtmd llama-common
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/archive"
 )
-set_property(TARGET llama mtmd PROPERTY VERSION)
-set_property(TARGET llama mtmd PROPERTY SOVERSION)
+set_property(TARGET llama mtmd llama-common PROPERTY VERSION)
+set_property(TARGET llama mtmd llama-common PROPERTY SOVERSION)
 
 foreach(_config DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
     set_target_properties(
-        llama mtmd
+        llama mtmd llama-common
         PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY_${_config} "${CMAKE_BINARY_DIR}/bin"
             LIBRARY_OUTPUT_DIRECTORY_${_config} "${CMAKE_BINARY_DIR}/bin"
