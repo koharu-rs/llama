@@ -1,4 +1,4 @@
-// From utilityai/llama-cpp-rs at e7af607, llama-cpp-sys-2/wrapper_common.cpp. Its includes are
+// From utilityai/llama-cpp-rs at 0364f5d, llama-cpp-sys-2/wrapper_common.cpp. Its includes are
 // relative to a llama.cpp submodule there; here the build's include paths find them.
 #include "wrapper_common.h"
 
