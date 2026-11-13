@@ -127,6 +127,8 @@ extern "C" llama_rs_status llama_rs_sampler_accept(struct llama_sampler * sample
 
 // Thin pass-through to llama.cpp's common_fit_params (a C++ symbol in libcommon).
 // Returns common_params_fit_status as an int: 0 = success, 1 = failure, 2 = error.
+// Diverges from llama-cpp-rs: since ggml-org/llama.cpp#31185 the fit takes a model's files as a
+// list, its GGUF then any external PLE file; this keeps the one-path C signature.
 extern "C" int llama_rs_fit_params(
     const char * path_model,
     struct llama_model_params * mparams,
@@ -138,7 +140,7 @@ extern "C" int llama_rs_fit_params(
     const void * extra,
     enum ggml_log_level log_level) {
     return static_cast<int>(common_fit_params(
-        path_model,
+        {path_model},
         mparams,
         cparams,
         tensor_split,
