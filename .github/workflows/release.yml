@@ -126,8 +126,8 @@ jobs:
           log-file-suffix: ${{ matrix.target }}
           sub-packages: >-
             ${{ runner.os == 'Linux'
-              && '["nvcc", "cudart", "crt", "thrust"]'
-              || '["nvcc", "cudart", "crt", "thrust", "nvvm", "cublas", "cublas_dev"]' }}
+              && '["nvcc", "cudart", "crt", "thrust", "nvml-dev"]'
+              || '["nvcc", "cudart", "crt", "thrust", "nvvm", "cublas", "cublas_dev", "nvml_dev"]' }}
           non-cuda-sub-packages: >-
             ${{ runner.os == 'Linux' && '["libcublas", "libcublas-dev"]' || '[]' }}
 
