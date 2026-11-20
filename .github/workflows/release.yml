@@ -2,6 +2,10 @@ name: Llama
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: llama.cpp release to build instead of the latest, such as v1.0.0
+        required: false
   schedule:
     - cron: '17 3 * * *'
   push:
@@ -16,19 +20,20 @@ concurrency:
 
 jobs:
   source:
-    name: Resolve latest release
+    name: Resolve release
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}
       release_tag: ${{ steps.release.outputs.release_tag }}
 
     steps:
-      - name: Resolve latest llama.cpp release
+      - name: Resolve llama.cpp release
         id: release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
         run: |
-          tag=$(gh api repos/ggml-org/llama.cpp/releases --jq '.[0].tag_name')
+          tag=${TAG:-$(gh api repos/ggml-org/llama.cpp/releases --jq '.[0].tag_name')}
           existing_tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[].tag_name')
           release_tag=$tag
           suffix=1
